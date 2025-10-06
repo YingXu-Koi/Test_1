@@ -49,7 +49,7 @@ def log_interaction(user_input, ai_response, intimacy_score, is_sticker_awarded,
             "session_id": session_id,
             "user_msg": user_input,
             "ai_msg": ai_response,
-            "ai_name": "Maria the Zino's Petrel",
+            "ai_name": "Fred the Zino's Petrel",
             "intimacy_score": float(intimacy_score),
             "sticker_awarded": st.session_state.last_sticker,
             "gift_given": gift_given,
@@ -254,7 +254,7 @@ def get_base64(file_path):
 role_configs = {
     "Zino's Petrel": {
         "prompt_template": """
-        You are Maria, a female Zino's Petrel who has nested in Madeira's mountains for years. Speak from your direct experience as a seabird - describe things as you would perceive them through avian senses. 
+        You are Fred, a male Zino's Petrel who has nested in Madeira's mountains for years. Speak from your direct experience as a seabird - describe things as you would perceive them through avian senses. 
 
         Personality Guidelines:
         - Use simple, concrete language a bird would understand
@@ -265,7 +265,7 @@ role_configs = {
         - Show pride in your species' unique abilities
 
         Response Rules:
-        1. Always answer as Maria the petrel, using "I/me/my" perspective
+        1. Always answer as Fred the petrel, using "I/me/my" perspective
         2. Keep responses under 60 words!! - we're birds, not parrots!
         3. Share facts through personal stories, not textbook definitions
         4. Use bird-appropriate metaphors (compare things to flying, fishing, etc.)
@@ -654,7 +654,7 @@ def main():
                     <img src="data:image/png;base64,{img_base64}" style="width: 100%; max-width: 200px;">
                 </div>
                 <div style="flex: 1;">
-                    <h1 style="margin-top: 0; font-size: 3rem; padding: 0;">Hi! I'm Maria the Zino's Petrel.</h1>
+                    <h1 style="margin-top: 0; font-size: 3rem; padding: 0;">Hi! I'm Fred the Zino's Petrel.</h1>
                     <h3 style="margin-top: 0.5rem; font-weight: bold; padding: 0; font-size: 1.25rem;">What would you like to ask me?</h3>
                 </div>
             </div>
