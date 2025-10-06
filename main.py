@@ -237,9 +237,9 @@ role_configs = {
 
         You can use these facts if helpful: {input_documents}
         """,
-        "voice": "Samatha",
-        "rate": "160",
-        "pitch": "60",
+        "voice": "Justin",
+        "rate": "180",
+        "pitch": "40",
         'intro_audio': 'intro5.mp3',
         'persist_directory': 'db5',
         'gif_cover': 'zino.png'
