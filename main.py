@@ -579,7 +579,7 @@ def main():
     role = list(role_configs.keys())[0]
     role_config = role_configs[role]
 
-    left_col, right_col = st.columns([0.75, 0.25], vertical_alignment="top", gap="large")
+    left_col, right_col = st.columns([0.65, 0.35], vertical_alignment="top", gap="large")
     
     with left_col:
         with open("zino.png", "rb") as img_file:
@@ -732,7 +732,7 @@ def main():
             if st.button("Tips", icon=":material/lightbulb:", help="Click to see tips on how to get a higher Friendship Score!", use_container_width=True, type="primary"):
                 score_guide()
         with input_section_col2:
-            if st.button("Start new conversation", icon=":material/chat_add_on:", help="Click to clear the chat history and start fresh!", use_container_width=True):
+            if st.button("Clear and Restart", icon=":material/chat_add_on:", help="Click to clear the chat history and start fresh!", use_container_width=True):
                 st.session_state.chat_history = []
                 st.session_state.show_score_guide = False
                 st.session_state.audio_played = True
