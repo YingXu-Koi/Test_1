@@ -706,7 +706,7 @@ def main():
 
     with right_col:
     
-        input_section_col1, input_section_col2 = st.columns([0.3, 0.7], gap="small")
+        input_section_col1, input_section_col2 = st.columns([0.4, 0.6], gap="small")
         with input_section_col1:
             # Show guide if toggled
             @st.dialog("💡How the 'Friendship Score!' Works", width="large")
