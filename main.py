@@ -600,6 +600,14 @@ def main():
         user_input = st.chat_input(placeholder="Ask a question!")
         print(f"User input: {user_input}")
 
+        chatSection = st.container(height=520, key="chat_section", border=False)
+        with chatSection:
+            if "chat_history" not in st.session_state:
+                st.session_state.chat_history = []
+            for message in st.session_state.chat_history:
+                with chat_message(message["role"]):
+                    st.markdown(message["content"])
+
         
 
         if user_input:
@@ -697,7 +705,7 @@ def main():
 
     with right_col:
     
-        input_section_col1, input_section_col2 = st.columns([0.6, 0.4], gap="small")
+        input_section_col1, input_section_col2 = st.columns([0.2, 0.8], gap="small")
         with input_section_col1:
             # Show guide if toggled
             @st.dialog("💡How the 'Friendship Score!' Works", width="large")
@@ -737,13 +745,6 @@ def main():
                 st.session_state.answer_to_speak = ""
                 st.session_state.most_relevant_texts = []
                 st.rerun()
-        chatSection = st.container(height=520, key="chat_section", border=False)
-        with chatSection:
-            if "chat_history" not in st.session_state:
-                st.session_state.chat_history = []
-            for message in st.session_state.chat_history:
-                with chat_message(message["role"]):
-                    st.markdown(message["content"])
                     
         # Friendship score section
         current_score = min(6, int(round(st.session_state.intimacy_score)))
