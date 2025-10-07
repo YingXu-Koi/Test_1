@@ -579,7 +579,7 @@ def main():
     role = list(role_configs.keys())[0]
     role_config = role_configs[role]
 
-    left_col, right_col = st.columns([0.65, 0.35], vertical_alignment="top", gap="large")
+    left_col, right_col = st.columns([0.7, 0.3], vertical_alignment="top", gap="large")
     
     with left_col:
         with open("zino.png", "rb") as img_file:
@@ -591,7 +591,8 @@ def main():
                     <img src="data:image/png;base64,{img_base64}" style="width: 100%; max-width: 200px;">
                 </div>
                 <div style="flex: 1;">
-                    <h1 style="margin-top: 0; font-size: 3rem; padding: 0;">Hi! I'm Fred the Zino's Petrel.</h1>
+                    <h1 style="margin-top: 0; font-size: 3rem; padding: 0;">Hi! I'm Fred,</h1>
+                    <h1 style="margin-top: 0; font-size: 3rem; padding: 0;">A Zino's Petrel.</h1>
                     <h3 style="margin-top: 0.5rem; font-weight: bold; padding: 0; font-size: 1.25rem;">What would you like to ask me?</h3>
                 </div>
             </div>
@@ -705,7 +706,7 @@ def main():
 
     with right_col:
     
-        input_section_col1, input_section_col2 = st.columns([0.2, 0.8], gap="small")
+        input_section_col1, input_section_col2 = st.columns([0.3, 0.7], gap="small")
         with input_section_col1:
             # Show guide if toggled
             @st.dialog("💡How the 'Friendship Score!' Works", width="large")
