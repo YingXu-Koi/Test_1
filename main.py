@@ -597,56 +597,9 @@ def main():
             </div>
         """, unsafe_allow_html=True)
         
-        input_section_col1, input_section_col2, input_section_col3 = st.columns([0.6, 0.1, 0.3], gap="small")
-        with input_section_col1:
-            user_input = st.chat_input(placeholder="Ask a question!")
-            print(f"User input: {user_input}")
-        with input_section_col2:
-            # Show guide if toggled
-            @st.dialog("💡How the 'Friendship Score!' Works", width="large")
-            def score_guide():
-                st.markdown("""
-                    <div style="
-                        background-color: #fff;
-                        border: 2px solid #a1b065;
-                        padding: 15px;
-                        border-radius: 10px;
-                        margin-bottom: 15px;
-                    ">
-                        <p style="margin-top: 0px;">Your Friendship Score</strong> grows based on how you talk to your critter friend. 🐦💚</p>
-                        <ul>
-                            <li>Ask about its habitat or life</li>
-                            <li>Show care or kindness</li>
-                            <li>Support nature and the planet</li>
-                            <li>Share your thoughts or feelings</li>
-                            <li>Be playful, curious, and respectful</li>
-                        </ul>
-                        <p style="margin-top: 10px;">💬 The more positive you are, the higher your score! 🌱✨ But watch out — unkind words or harmful ideas can lower your score. 🚫</p>
-                    </div>
-                    """, unsafe_allow_html=True)
-            if st.button("Tips", icon=":material/lightbulb:", help="Click to see tips on how to get a higher Friendship Score!", use_container_width=True, type="primary"):
-                score_guide()
-        with input_section_col3:
-            if st.button("Start new conversation", icon=":material/chat_add_on:", help="Click to clear the chat history and start fresh!", use_container_width=True):
-                st.session_state.chat_history = []
-                st.session_state.show_score_guide = False
-                st.session_state.audio_played = True
-                st.session_state.gift_given = False
-                st.session_state.intimacy_score = 0
-                st.session_state.awarded_stickers = []
-                st.session_state.last_question = ""
-                st.session_state.has_interacted = False
-                st.session_state.processing = False
-                st.session_state.answer_to_speak = ""
-                st.session_state.most_relevant_texts = []
-                st.rerun()
-        chatSection = st.container(height=520, key="chat_section", border=False)
-        with chatSection:
-            if "chat_history" not in st.session_state:
-                st.session_state.chat_history = []
-            for message in st.session_state.chat_history:
-                with chat_message(message["role"]):
-                    st.markdown(message["content"])
+        user_input = st.chat_input(placeholder="Ask a question!")
+        print(f"User input: {user_input}")
+
         
 
         if user_input:
@@ -743,6 +696,54 @@ def main():
         
 
     with right_col:
+    
+         input_section_col1, input_section_col2 = st.columns([0.6, 0.4], gap="small")
+        with input_section_col1:
+            # Show guide if toggled
+            @st.dialog("💡How the 'Friendship Score!' Works", width="large")
+            def score_guide():
+                st.markdown("""
+                    <div style="
+                        background-color: #fff;
+                        border: 2px solid #a1b065;
+                        padding: 15px;
+                        border-radius: 10px;
+                        margin-bottom: 15px;
+                    ">
+                        <p style="margin-top: 0px;">Your Friendship Score</strong> grows based on how you talk to your critter friend. 🐦💚</p>
+                        <ul>
+                            <li>Ask about its habitat or life</li>
+                            <li>Show care or kindness</li>
+                            <li>Support nature and the planet</li>
+                            <li>Share your thoughts or feelings</li>
+                            <li>Be playful, curious, and respectful</li>
+                        </ul>
+                        <p style="margin-top: 10px;">💬 The more positive you are, the higher your score! 🌱✨ But watch out — unkind words or harmful ideas can lower your score. 🚫</p>
+                    </div>
+                    """, unsafe_allow_html=True)
+            if st.button("Tips", icon=":material/lightbulb:", help="Click to see tips on how to get a higher Friendship Score!", use_container_width=True, type="primary"):
+                score_guide()
+        with input_section_col2:
+            if st.button("Start new conversation", icon=":material/chat_add_on:", help="Click to clear the chat history and start fresh!", use_container_width=True):
+                st.session_state.chat_history = []
+                st.session_state.show_score_guide = False
+                st.session_state.audio_played = True
+                st.session_state.gift_given = False
+                st.session_state.intimacy_score = 0
+                st.session_state.awarded_stickers = []
+                st.session_state.last_question = ""
+                st.session_state.has_interacted = False
+                st.session_state.processing = False
+                st.session_state.answer_to_speak = ""
+                st.session_state.most_relevant_texts = []
+                st.rerun()
+        chatSection = st.container(height=520, key="chat_section", border=False)
+        with chatSection:
+            if "chat_history" not in st.session_state:
+                st.session_state.chat_history = []
+            for message in st.session_state.chat_history:
+                with chat_message(message["role"]):
+                    st.markdown(message["content"])
         # Friendship score section
         current_score = min(6, int(round(st.session_state.intimacy_score)))
         
