@@ -697,7 +697,7 @@ def main():
 
     with right_col:
     
-         input_section_col1, input_section_col2 = st.columns([0.6, 0.4], gap="small")
+        input_section_col1, input_section_col2 = st.columns([0.6, 0.4], gap="small")
         with input_section_col1:
             # Show guide if toggled
             @st.dialog("💡How the 'Friendship Score!' Works", width="large")
@@ -744,6 +744,7 @@ def main():
             for message in st.session_state.chat_history:
                 with chat_message(message["role"]):
                     st.markdown(message["content"])
+                    
         # Friendship score section
         current_score = min(6, int(round(st.session_state.intimacy_score)))
         
