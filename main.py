@@ -334,18 +334,30 @@ sticker_rewards = {
     },
     "What do you do in your daily life? What do you do during the day and at night?": {
         "image": "stickers/routine.png",
-        "caption": "🌙 Daily Life Detective!\nYou've discovered my secret schedule!",
-        "semantic_keywords": ["daily", "routine", "day", "night", "schedule", "activities"]
+        "caption": {
+            "English": "🌙 Daily Life Detective!\nYou've discovered my secret schedule!",
+            "Portuguese": "🌙 Detetive da Vida Diária!\nDescobriste o meu horário secreto!"
+        },
+        "semantic_keywords": ["daily", "routine", "day", "night", "schedule", "activities",
+                             "diário", "rotina", "dia", "noite", "horário", "atividades"]
     },
     "What do you eat for food—and how do you catch it?": {
         "image": "stickers/food.png",
-        "caption": "🍽️ Food Finder!\nThanks for feeding your curiosity!",
-        "semantic_keywords": ["eat", "food", "diet", "prey", "hunt", "catch", "feed"]
+        "caption": {
+            "English": "🍽️ Food Finder!\nThanks for feeding your curiosity!",
+            "Portuguese": "🍽️ Descobridor de Comida!\nObrigado por alimentares a tua curiosidade!"
+        },
+        "semantic_keywords": ["eat", "food", "diet", "prey", "hunt", "catch", "feed",
+                             "comer", "comida", "dieta", "presa", "caçar", "apanhar", "alimentar"]
     },
     "How can I help you? What do you need from humans to help your species thrive?": {
         "image": "stickers/helper.png",
-        "caption": "🌱 Species Supporter!\nYou care about our survival!",
-        "semantic_keywords": ["help", "support", "thrive", "survive", "conservation", "protect", "save"]
+        "caption": {
+            "English": "🌱 Species Supporter!\nYou care about our survival!",
+            "Portuguese": "🌱 Apoiante de Espécies!\nTu importas-te com a nossa sobrevivência!"
+        },
+        "semantic_keywords": ["help", "support", "thrive", "survive", "conservation", "protect", "save",
+                             "ajudar", "apoiar", "prosperar", "sobreviver", "conservação", "proteger", "salvar"]
     }
 }
 
@@ -373,54 +385,59 @@ def chat_message(name):
         return st.container(key=f"{name}-{uuid.uuid4()}").chat_message(name=name, avatar="zino.png", width="content")
     else:
         return st.container(key=f"{name}-{uuid.uuid4()}").chat_message(name=name, avatar=":material/face:", width="content")
+
+# Language texts
+language_texts = {
+    "English": {
+        "title": "Hi! I'm Fred,",
+        "subtitle": "A Zino's Petrel.",
+        "prompt": "What would you like to ask me?",
+        "chat_placeholder": "Ask a question!",
+        "tips_button": "Tips",
+        "clear_button": "Clear and Restart",
+        "friendship_score": "Friendship Score!",
+        "score_description": "Unlock special stickers with your interactions",
+        "doubtful": "Doubtful about the response?",
+        "fact_check": "Fact-Check this answer",
+        "fact_check_info": "Ask me a question to see the fact-check results based on scientific knowledge!",
+        "loading_audio": "Preparing audio response...",
+        "loading_thought": "Thinking about your question...",
+        "gift_message": "After our wonderful conversation, I feel you deserve something special. \nPlease accept this medal as a symbol of your contribution to Madeira's biodiversity!",
+        "medal_caption": "Biodiversity Trailblazer Medal",
+        "sticker_toast": "You earned a new sticker!",
+        "error_message": "I'm sorry, I had trouble processing that. Could you try again?"
+    },
+    "Portuguese": {
+        "title": "Olá! Eu sou o Fred,",
+        "subtitle": "Uma Freira da Madeira.",
+        "prompt": "O que gostarias de me perguntar?",
+        "chat_placeholder": "Faz uma pergunta!",
+        "tips_button": "Dicas",
+        "clear_button": "Limpar e Recomeçar",
+        "friendship_score": "Pontuação de Amizade!",
+        "score_description": "Desbloqueia autocolantes especiais com as tuas interações",
+        "doubtful": "Com dúvidas sobre a resposta?",
+        "fact_check": "Verificar Factos desta resposta",
+        "fact_check_info": "Faz-me uma pergunta para veres os resultados da verificação baseados em conhecimento científico!",
+        "loading_audio": "A preparar resposta de áudio...",
+        "loading_thought": "A pensar na tua pergunta...",
+        "gift_message": "Após a nossa conversa maravilhosa, sinto que mereces algo especial. \nPor favor, aceita esta medalha como símbolo do teu contributo para a biodiversidade da Madeira!",
+        "medal_caption": "Medalha de Pioneiro da Biodiversidade",
+        "sticker_toast": "Ganhaste um autocolante novo!",
+        "error_message": "Desculpa, tive problemas a processar isso. Podes tentar novamente?"
+    }
+}
+
 # UI
 def main():
-    # Language configuration
+    # Language state
     if "language" not in st.session_state:
         st.session_state.language = "English"  # Default language
     
-    # Language texts
-    language_texts = {
-        "English": {
-            "title": "Hi! I'm Fred,",
-            "subtitle": "A Zino's Petrel.",
-            "prompt": "What would you like to ask me?",
-            "chat_placeholder": "Ask a question!",
-            "tips_button": "Tips",
-            "clear_button": "Clear and Restart",
-            "friendship_score": "Friendship Score!",
-            "score_description": "Unlock special stickers with your interactions",
-            "doubtful": "Doubtful about the response?",
-            "fact_check": "Fact-Check this answer",
-            "fact_check_info": "Ask me a question to see the fact-check results based on scientific knowledge!",
-            "loading_audio": "Preparing audio response...",
-            "loading_thought": "Thinking about your question...",
-            "gift_message": "After our wonderful conversation, I feel you deserve something special. \nPlease accept this medal as a symbol of your contribution to Madeira's biodiversity!",
-            "medal_caption": "Biodiversity Trailblazer Medal",
-            "sticker_toast": "You earned a new sticker!",
-            "error_message": "I'm sorry, I had trouble processing that. Could you try again?"
-        },
-        "Portuguese": {
-            "title": "Olá! Eu sou o Fred,",
-            "subtitle": "Uma Freira da Madeira.",
-            "prompt": "O que gostarias de me perguntar?",
-            "chat_placeholder": "Faz uma pergunta!",
-            "tips_button": "Dicas",
-            "clear_button": "Limpar e Recomeçar",
-            "friendship_score": "Pontuação de Amizade!",
-            "score_description": "Desbloqueia autocolantes especiais com as tuas interações",
-            "doubtful": "Com dúvidas sobre a resposta?",
-            "fact_check": "Verificar Factos desta resposta",
-            "fact_check_info": "Faz-me uma pergunta para veres os resultados da verificação baseados em conhecimento científico!",
-            "loading_audio": "A preparar resposta de áudio...",
-            "loading_thought": "A pensar na tua pergunta...",
-            "gift_message": "Após a nossa conversa maravilhosa, sinto que mereces algo especial. \nPor favor, aceita esta medalha como símbolo do teu contributo para a biodiversidade da Madeira!",
-            "medal_caption": "Medalha de Pioneiro da Biodiversidade",
-            "sticker_toast": "Ganhaste um autocolante novo!",
-            "error_message": "Desculpa, tive problemas a processar isso. Podes tentar novamente?"
-        }
-    }
-
+    # Get current language texts
+    texts = language_texts[st.session_state.language]
+    
+    # Existing session state initialization
     if "has_interacted" not in st.session_state:
         st.session_state.has_interacted = False
     if "chat_history" not in st.session_state:
@@ -697,8 +714,6 @@ def main():
                 with chat_message(message["role"]):
                     st.markdown(message["content"])
 
-        
-
         if user_input:
             try:
                 # Set processing state first
@@ -770,10 +785,7 @@ def main():
                 print(f"Outer exception in user input handling: {str(outer_e)}")
                 st.error(f"An unexpected error occurred: {str(outer_e)}")
 
-
-        # Gift section
-        gift_message = "After our wonderful conversation, I feel you deserve something special. \nPlease accept this medal as a symbol of your contribution to Madeira's biodiversity!"
-                    
+        # Gift section                    
         @st.dialog("🎁 Your Gift", width=680)
         def gift_dialog():
             with open("gift.png", "rb") as f:
@@ -793,6 +805,8 @@ def main():
         
 
     with right_col:
+        # Language switcher
+        st.markdown("**Language / Idioma:**")
         col1, col2 = st.columns(2)
         with col1:
             if st.button("🇬🇧 English", use_container_width=True, 
@@ -804,16 +818,14 @@ def main():
                         type="primary" if st.session_state.language == "Portuguese" else "secondary"):
                 st.session_state.language = "Portuguese"
                 st.rerun()
-        
-        # Get current language texts
-        texts = language_texts[st.session_state.language]
     
         input_section_col1, input_section_col2 = st.columns([0.35, 0.65], gap="small")
         with input_section_col1:
             # Show guide if toggled
             @st.dialog("💡How the 'Friendship Score!' Works", width="large")
             def score_guide():
-                st.markdown("""
+                if st.session_state.language == "English":
+                    guide_text = """
                     <div style="
                         background-color: #fff;
                         border: 2px solid #a1b065;
@@ -821,7 +833,7 @@ def main():
                         border-radius: 10px;
                         margin-bottom: 15px;
                     ">
-                        <p style="margin-top: 0px;">Your Friendship Score</strong> grows based on how you talk to your critter friend. 🐦💚</p>
+                        <p style="margin-top: 0px;">Your <strong>Friendship Score</strong> grows based on how you talk to your critter friend. 🐦💚</p>
                         <ul>
                             <li>Ask about its habitat or life</li>
                             <li>Show care or kindness</li>
@@ -831,9 +843,32 @@ def main():
                         </ul>
                         <p style="margin-top: 10px;">💬 The more positive you are, the higher your score! 🌱✨ But watch out — unkind words or harmful ideas can lower your score. 🚫</p>
                     </div>
-                    """, unsafe_allow_html=True)
+                    """
+                else:
+                    guide_text = """
+                    <div style="
+                        background-color: #fff;
+                        border: 2px solid #a1b065;
+                        padding: 15px;
+                        border-radius: 10px;
+                        margin-bottom: 15px;
+                    ">
+                        <p style="margin-top: 0px;">A tua <strong>Pontuação de Amizade</strong> cresce com base em como falas com o teu amigo animal. 🐦💚</p>
+                        <ul>
+                            <li>Pergunta sobre o habitat ou vida dele</li>
+                            <li>Mostra cuidado ou bondade</li>
+                            <li>Apoia a natureza e o planeta</li>
+                            <li>Partilha os teus pensamentos ou sentimentos</li>
+                            <li>Sê brincalhão, curioso e respeitoso</li>
+                        </ul>
+                        <p style="margin-top: 10px;">💬 Quanto mais positivo fores, maior será a tua pontuação! 🌱✨ Mas cuidado — palavras rudes ou ideias prejudiciais podem baixar a tua pontuação. 🚫</p>
+                    </div>
+                    """
+                st.markdown(guide_text, unsafe_allow_html=True)
+                
             if st.button(texts['tips_button'], icon=":material/lightbulb:", help="Click to see tips on how to get a higher Friendship Score!", use_container_width=True, type="primary"):
                 score_guide()
+                
         with input_section_col2:
             if st.button(texts['clear_button'], icon=":material/chat_add_on:", help="Click to clear the chat history and start fresh!", use_container_width=True):
                 st.session_state.chat_history = []
@@ -887,23 +922,22 @@ def main():
                         st.session_state.awarded_stickers.append({
                             "key": sticker_key,
                             "image": reward["image"],
-                            "caption": reward["caption"]
+                            "caption": reward["caption"][st.session_state.language] if isinstance(reward["caption"], dict) else reward["caption"]
                         })
                         st.toast(texts['sticker_toast'], icon="⭐")
                     sticker_awarded = True
                     break
+                    
         # Display the most recent sticker if any exist
         if st.session_state.awarded_stickers:
             # Get the most recent sticker (last in the list)
             most_recent = st.session_state.awarded_stickers[-1]
-            current_language = st.session_state.language
-            caption = reward["caption"][current_language]
-            
+
             st.markdown(
                 f"""
                 <div class="sticker-reward">
                     <img src="data:image/png;base64,{base64.b64encode(open(most_recent["image"], "rb").read()).decode()}">
-                    <div class="sticker-caption">{caption}</div>
+                    <div class="sticker-caption">{most_recent["caption"]}</div>
                 </div>
                 """,
                 unsafe_allow_html=True
@@ -916,13 +950,14 @@ def main():
             st.markdown(
                 f"""
                 <div style="text-align: center; font-size: 14px; margin-top: -10px; color: #555; margin-bottom: 20px;">
-                    You've collected {total_collected} out of {total_possible} stickers!
+                    {f"You've collected {total_collected} out of {total_possible} stickers!" if st.session_state.language == "English" else f"Já colecionaste {total_collected} de {total_possible} autocolantes!"}
                 </div>
                 """,
                 unsafe_allow_html=True
             )
+            
         # Fact Check Section
-        st.markdown("""
+        st.markdown(f"""
             <div style="font-size:18px; font-style: italic; font-weight:bold; color:#31333e; text-align: left;">
                 {texts['doubtful']}
             </div>
@@ -930,9 +965,11 @@ def main():
         
         with st.expander(texts['fact_check'], expanded=False):
             if "most_relevant_texts" in st.session_state:  # Check session state instead of locals()
-                concept_state = (
-                    "This is an concept idea. The following text is drawn from authoritative knowledge bases. "
-                )
+                if st.session_state.language == "English":
+                    concept_state = "This is an concept idea. The following text is drawn from authoritative knowledge bases."
+                else:
+                    concept_state = "Esta é uma ideia conceptual. O seguinte texto é retirado de bases de conhecimento autorizadas."
+                    
                 st.markdown(f"""
                     <div style="
                         background: #d6efef;
@@ -950,6 +987,8 @@ def main():
                     st.write(st.session_state.most_relevant_texts[0].page_content)
             else:
                 st.info(texts['fact_check_info'])
+                
+    cleanup_audio_files()
 
 if __name__ == "__main__":
     main()
