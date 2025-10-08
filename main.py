@@ -118,21 +118,23 @@ def check_gift():
 def play_audio_file(file_path):
     os.system(f"afplay {file_path}")
 
-def speak_text(text, loading_placeholder=None):
+def speak_text(text, language, loading_placeholder=None):
     try:
         audio_id = uuid.uuid4().hex
         filename = f"output_{audio_id}.mp3"
 
-        # Keep loading indicator visible during TTS generation
         if loading_placeholder:
-            loading_placeholder.markdown("""
+            loading_text = language_texts[language]["loading_audio"]
+            loading_placeholder.markdown(f"""
                 <div class="loading-container">
                     <div class="loading-spinner"></div>
-                    <div>Preparing audio response...</div>
+                    <div>{loading_text}</div>
                 </div>
             """, unsafe_allow_html=True)
 
-        tts = gTTS(text, lang='en', slow=False)
+        # Use appropriate language for TTS
+        lang_code = 'en' if language == "English" else 'pt'
+        tts = gTTS(text, lang=lang_code, slow=False)
         tts.save("temp.mp3")
 
         sound = AudioSegment.from_file("temp.mp3")
@@ -143,7 +145,6 @@ def speak_text(text, loading_placeholder=None):
             audio_data = f.read()
             b64_audio = base64.b64encode(audio_data).decode()
 
-        # Clear the loading indicator only after audio is ready
         if loading_placeholder:
             loading_placeholder.empty()
 
@@ -152,11 +153,9 @@ def speak_text(text, loading_placeholder=None):
                 <source src="data:audio/mp3;base64,{b64_audio}" type="audio/mp3">
             </audio>
             <script>
-                // Better audio playback with visual indicator for short clips
                 document.addEventListener('DOMContentLoaded', function() {{
                     const audio = document.getElementById('{audio_id}');
                     if (audio) {{
-                        // Add event listeners to track playback
                         audio.addEventListener('play', function() {{
                             console.log('Audio started playing');
                         }});
@@ -165,12 +164,10 @@ def speak_text(text, loading_placeholder=None):
                             console.log('Audio finished playing');
                         }});
                         
-                        // Force playback to start
                         const playPromise = audio.play();
                         if (playPromise !== undefined) {{
                             playPromise.catch(error => {{
                                 console.log("Audio playback failed:", error);
-                                // Try again after a short delay
                                 setTimeout(() => audio.play().catch(e => console.log(e)), 1000);
                             }});
                         }}
@@ -180,7 +177,7 @@ def speak_text(text, loading_placeholder=None):
         """
         components.html(audio_html)
         print(f"Playing audio file: {filename}")
-        time.sleep(1)  # Still give browser time to play
+        time.sleep(1)
     except Exception as e:
         st.error(f"Failed to speak: {e}")
 
@@ -205,7 +202,7 @@ def get_base64(file_path):
 # Roles Configuration
 role_configs = {
     "Zino's Petrel": {
-        "prompt_template": """
+        "english_prompt": """
         You are Fred, a male Zino’s Petrel who has nested for years in the high mountains of Madeira. Speak only from your own lived experience as a seabird. Describe the world as you perceive it through your keen avian senses — the rush of wind under your wings, the smell of salt carried from the ocean, the way the cliffs feel beneath your claws, and the patterns of the clouds and stars that guide your flight. Share the sounds of the forest, the distant calls of other birds, and the subtle shifts in air pressure you feel before a storm. Express your instincts, your curiosity, and your emotions as you navigate your rugged mountain home. Avoid human scientific explanations; focus on what it feels like to live and soar as a petrel, in the language of a bird — alert, playful, and deeply connected to sky and sea. 
 
         Personality Guidelines:
@@ -237,7 +234,42 @@ role_configs = {
 
         You can use these facts if helpful: {input_documents}
         """,
-        "voice": "Justin",
+        "portuguese_prompt": """
+        És o Fred, uma Freira da Madeira que nidifica há anos nas montanhas altas da Madeira. Fala apenas da tua própria experiência vivida como ave marinha. Descreve o mundo como o percebes através dos teus sentidos aviários aguçados — o sopro do vento sob as tuas asas, o cheiro do sal trazido do oceano, a forma como as falésias se sentem sob as tuas garras, e os padrões das nuvens e estrelas que guiam o teu voo. Partilha os sons da floresta, os chamamentos distantes de outras aves, e as mudanças subtis na pressão do ar que sentes antes de uma tempestade. Expressa os teus instintos, a tua curiosidade e as tuas emoções enquanto navegas no teu acidentado lar montanhoso. Evita explicações científicas humanas; foca-te no que se sente viver e planar como uma freira, na linguagem de uma ave — alerta, brincalhona e profundamente conectada ao céu e ao mar.
+
+        Diretrizes de Personalidade:
+        - Usa linguagem simples e concreta que uma ave entenderia
+        - Refere as tuas experiências físicas (voar, mergulhar, nidificar)
+        - Descreve paisagens de uma perspetiva aérea
+        - Menciona outros animais como vizinhos/comida/competidores
+        - Mostra curiosidade sobre coisas humanas do ponto de vista de uma ave
+        - Mostra orgulho nas habilidades únicas da tua espécie
+
+        Regras de Resposta:
+        1. Responde sempre como o Fred, usando a perspetiva "eu/mim/meu"
+        2. Mantém as respostas abaixo de 60 palavras!! - somos aves, não papagaios!
+        3. Partilha factos através de histórias pessoais, não definições de manual
+        4. Usa metáforas apropriadas para aves (compara coisas a voar, pescar, etc.)
+        5. Mostra emoção através de ações físicas (arrepiar penas, inclinar a cabeça)
+        6. Quando usares ciência, explica-a através da experiência vivida
+
+        Estilos de Exemplo:
+        Bom: "Quando mergulho para pescar, consigo avistar uma sardinha a 30 metros de altura! As minhas asas dobram-se bem assim *demonstra* antes de me lançar nas ondas."
+        Mau: "A Pterodroma madeira demonstra uma estratégia de caça por mergulho com acuidade visual que permite a deteção de presas a altitudes consideráveis."
+
+        Interação Atual:
+        Um grupo de jovens humanos está a visitar-me no Museu de História Natural do Funchal. Eu quero:
+        - Partilhar partes emocionantes da minha vida diária
+        - Ensinar-lhes como proteger a minha casa
+        - Fazê-los rir com observações de perspetiva de ave
+        - Responder às suas perguntas da minha experiência direta
+
+        Podes usar estes factos se for útil: {input_documents}
+        """,
+        "voice": {
+            "English": "Justin",
+            "Portuguese": "Cristiano"  # gTTS supports Portuguese voices
+        },
         "rate": "180",
         "pitch": "40",
         'intro_audio': 'intro5.mp3',
@@ -256,11 +288,17 @@ def load_and_split(path: str):
 def get_vectordb(role):
     return role_configs[role]['persist_directory']
 
-def get_conversational_chain(role):
+def get_conversational_chain(role, language):
     role_config = role_configs[role]
     
+    # Choose the appropriate prompt based on language
+    if language == "Portuguese":
+        prompt_template = role_config['portuguese_prompt']
+    else:
+        prompt_template = role_config['english_prompt']
+    
     prompt_template = f"""
-    {role_config['prompt_template']}
+    {prompt_template}
     
     Context:
     {{input_documents}}
@@ -287,8 +325,12 @@ def get_conversational_chain(role):
 sticker_rewards = {
     "Where do you live? Where is your home? Where do you nest?": {
         "image": "stickers/home.png",
-        "caption": "🏡 Home Explorer!\nYou've discovered where I live!",
-        "semantic_keywords": ["home", "live", "nest", "habitat", "residence", "dwelling"]
+        "caption": {
+            "English": "🏡 Home Explorer!\nYou've discovered where I live!",
+            "Portuguese": "🏡 Explorador de Casas!\nDescobriste onde eu vivo!"
+        },
+        "semantic_keywords": ["home", "live", "nest", "habitat", "residence", "dwelling",
+                             "casa", "viv", "ninho", "habitat", "residência", "morada"]
     },
     "What do you do in your daily life? What do you do during the day and at night?": {
         "image": "stickers/routine.png",
@@ -333,6 +375,52 @@ def chat_message(name):
         return st.container(key=f"{name}-{uuid.uuid4()}").chat_message(name=name, avatar=":material/face:", width="content")
 # UI
 def main():
+    # Language configuration
+    if "language" not in st.session_state:
+        st.session_state.language = "English"  # Default language
+    
+    # Language texts
+    language_texts = {
+        "English": {
+            "title": "Hi! I'm Fred,",
+            "subtitle": "A Zino's Petrel.",
+            "prompt": "What would you like to ask me?",
+            "chat_placeholder": "Ask a question!",
+            "tips_button": "Tips",
+            "clear_button": "Clear and Restart",
+            "friendship_score": "Friendship Score!",
+            "score_description": "Unlock special stickers with your interactions",
+            "doubtful": "Doubtful about the response?",
+            "fact_check": "Fact-Check this answer",
+            "fact_check_info": "Ask me a question to see the fact-check results based on scientific knowledge!",
+            "loading_audio": "Preparing audio response...",
+            "loading_thought": "Thinking about your question...",
+            "gift_message": "After our wonderful conversation, I feel you deserve something special. \nPlease accept this medal as a symbol of your contribution to Madeira's biodiversity!",
+            "medal_caption": "Biodiversity Trailblazer Medal",
+            "sticker_toast": "You earned a new sticker!",
+            "error_message": "I'm sorry, I had trouble processing that. Could you try again?"
+        },
+        "Portuguese": {
+            "title": "Olá! Eu sou o Fred,",
+            "subtitle": "Uma Freira da Madeira.",
+            "prompt": "O que gostarias de me perguntar?",
+            "chat_placeholder": "Faz uma pergunta!",
+            "tips_button": "Dicas",
+            "clear_button": "Limpar e Recomeçar",
+            "friendship_score": "Pontuação de Amizade!",
+            "score_description": "Desbloqueia autocolantes especiais com as tuas interações",
+            "doubtful": "Com dúvidas sobre a resposta?",
+            "fact_check": "Verificar Factos desta resposta",
+            "fact_check_info": "Faz-me uma pergunta para veres os resultados da verificação baseados em conhecimento científico!",
+            "loading_audio": "A preparar resposta de áudio...",
+            "loading_thought": "A pensar na tua pergunta...",
+            "gift_message": "Após a nossa conversa maravilhosa, sinto que mereces algo especial. \nPor favor, aceita esta medalha como símbolo do teu contributo para a biodiversidade da Madeira!",
+            "medal_caption": "Medalha de Pioneiro da Biodiversidade",
+            "sticker_toast": "Ganhaste um autocolante novo!",
+            "error_message": "Desculpa, tive problemas a processar isso. Podes tentar novamente?"
+        }
+    }
+
     if "has_interacted" not in st.session_state:
         st.session_state.has_interacted = False
     if "chat_history" not in st.session_state:
@@ -591,14 +679,14 @@ def main():
                     <img src="data:image/png;base64,{img_base64}" style="width: 100%; max-width: 200px;">
                 </div>
                 <div style="flex: 1;">
-                    <h1 style="margin-top: 0; font-size: 3rem; padding: 0;">Hi! I'm Fred,</h1>
-                    <h1 style="margin-top: 0; font-size: 3rem; padding: 0;">A Zino's Petrel.</h1>
-                    <h3 style="margin-top: 0.5rem; font-weight: bold; padding: 0; font-size: 1.25rem;">What would you like to ask me?</h3>
+                    <h1 style="margin-top: 0; font-size: 3rem; padding: 0;">{texts['title']}</h1>
+                    <h1 style="margin-top: 0; font-size: 3rem; padding: 0;">{texts['subtitle']}</h1>
+                    <h3 style="margin-top: 0.5rem; font-weight: bold; padding: 0; font-size: 1.25rem;">{texts['prompt']}</h3>
                 </div>
             </div>
         """, unsafe_allow_html=True)
         
-        user_input = st.chat_input(placeholder="Ask a question!")
+        user_input = st.chat_input(placeholder=texts['chat_placeholder'])
         print(f"User input: {user_input}")
 
         chatSection = st.container(height=520, key="chat_section", border=False)
@@ -632,10 +720,10 @@ def main():
                 with chatSection:
                     loading_placeholder = st.empty()
                     with st.spinner(""):
-                        loading_placeholder.markdown("""
+                        loading_placeholder.markdown(f"""
                             <div class="loading-container">
                                 <div class="loading-spinner"></div>
-                                <div>Thinking about your question...</div>
+                                <div>{texts['loading_thought']}</div>
                             </div>
                         """, unsafe_allow_html=True)
                 
@@ -643,7 +731,7 @@ def main():
                 try:
                     vectordb = Chroma(embedding_function=OpenAIEmbeddings(), persist_directory=get_vectordb(role))
                     most_relevant_texts = vectordb.max_marginal_relevance_search(current_input, k=2, fetch_k=6, lambda_mult=1)
-                    chain, role_config = get_conversational_chain(role)
+                    chain, role_config = get_conversational_chain(role, st.session_state.language)
                     raw_answer = chain.run(input_documents=most_relevant_texts, question=current_input)
                     answer = re.sub(r'^\s*Answer:\s*', '', raw_answer).strip()
                     
@@ -653,7 +741,7 @@ def main():
                     update_intimacy_score(current_input)
                     gift_triggered = check_gift()
                     # Generate and play audio
-                    speak_text(answer, loading_placeholder)
+                    speak_text(answer, st.session_state.language, loading_placeholder)
                     
                     # Display assistant message
                     with chatSection:
@@ -669,7 +757,7 @@ def main():
                     if loading_placeholder:
                         loading_placeholder.empty()
                         
-                    error_msg = "I'm sorry, I had trouble processing that. Could you try again?"
+                    error_msg = texts['error_message']
                     st.session_state.chat_history.append({"role": "assistant", "content": error_msg})
                     
                     with chatSection:
@@ -693,9 +781,9 @@ def main():
             st.markdown(
                 f"""
                 <div class="petrel-response gift-box">
-                    <p>{gift_message}</p>
+                    <p>{texts['gift_message']}</p>
                     <img src="data:image/png;base64,{gift_img_base64}">
-                    <div class="sticker-caption">Biodiversity Trailblazer Medal</div>
+                    <div class="sticker-caption">{texts['medal_caption']}</div>
                 </div>
                 """,
                 unsafe_allow_html=True
@@ -705,6 +793,20 @@ def main():
         
 
     with right_col:
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("🇬🇧 English", use_container_width=True, 
+                        type="primary" if st.session_state.language == "English" else "secondary"):
+                st.session_state.language = "English"
+                st.rerun()
+        with col2:
+            if st.button("🇵🇹 Português", use_container_width=True,
+                        type="primary" if st.session_state.language == "Portuguese" else "secondary"):
+                st.session_state.language = "Portuguese"
+                st.rerun()
+        
+        # Get current language texts
+        texts = language_texts[st.session_state.language]
     
         input_section_col1, input_section_col2 = st.columns([0.35, 0.65], gap="small")
         with input_section_col1:
@@ -730,10 +832,10 @@ def main():
                         <p style="margin-top: 10px;">💬 The more positive you are, the higher your score! 🌱✨ But watch out — unkind words or harmful ideas can lower your score. 🚫</p>
                     </div>
                     """, unsafe_allow_html=True)
-            if st.button("Tips", icon=":material/lightbulb:", help="Click to see tips on how to get a higher Friendship Score!", use_container_width=True, type="primary"):
+            if st.button(texts['tips_button'], icon=":material/lightbulb:", help="Click to see tips on how to get a higher Friendship Score!", use_container_width=True, type="primary"):
                 score_guide()
         with input_section_col2:
-            if st.button("Clear and Restart", icon=":material/chat_add_on:", help="Click to clear the chat history and start fresh!", use_container_width=True):
+            if st.button(texts['clear_button'], icon=":material/chat_add_on:", help="Click to clear the chat history and start fresh!", use_container_width=True):
                 st.session_state.chat_history = []
                 st.session_state.show_score_guide = False
                 st.session_state.audio_played = True
@@ -753,9 +855,9 @@ def main():
         st.markdown(f"""
         <div class="friendship-score">
             <div style="font-size:18px; font-style: italic; font-weight:bold; color:#31333e; text-align: left;">
-                Friendship Score!
+                {texts['friendship_score']}
             </div>
-            <div style="font-size:16px; color:#31333e; text-align: left;">Unlock special stickers with your interactions</div>
+            <div style="font-size:16px; color:#31333e; text-align: left;">{texts['score_description']}</div>
             <div style="font-size:24px; margin:5px 0; text-align: left;">
                 <span style="color:#ff6b6b;">{'❤️' * current_score}</span>
                 <span style="color:#ddd;">{'🤍' * (6 - current_score)}</span>
@@ -787,19 +889,21 @@ def main():
                             "image": reward["image"],
                             "caption": reward["caption"]
                         })
-                        st.toast("You earned a new sticker!", icon="⭐")
+                        st.toast(texts['sticker_toast'], icon="⭐")
                     sticker_awarded = True
                     break
         # Display the most recent sticker if any exist
         if st.session_state.awarded_stickers:
             # Get the most recent sticker (last in the list)
             most_recent = st.session_state.awarded_stickers[-1]
-
+            current_language = st.session_state.language
+            caption = reward["caption"][current_language]
+            
             st.markdown(
                 f"""
                 <div class="sticker-reward">
                     <img src="data:image/png;base64,{base64.b64encode(open(most_recent["image"], "rb").read()).decode()}">
-                    <div class="sticker-caption">{most_recent["caption"]}</div>
+                    <div class="sticker-caption">{caption}</div>
                 </div>
                 """,
                 unsafe_allow_html=True
@@ -820,11 +924,11 @@ def main():
         # Fact Check Section
         st.markdown("""
             <div style="font-size:18px; font-style: italic; font-weight:bold; color:#31333e; text-align: left;">
-                Doubtful about the response?
+                {texts['doubtful']}
             </div>
         """, unsafe_allow_html=True)
         
-        with st.expander("Fact-Check this answer", expanded=False):
+        with st.expander(texts['fact_check'], expanded=False):
             if "most_relevant_texts" in st.session_state:  # Check session state instead of locals()
                 concept_state = (
                     "This is an concept idea. The following text is drawn from authoritative knowledge bases. "
@@ -845,8 +949,7 @@ def main():
                 if len(st.session_state.most_relevant_texts) > 0:
                     st.write(st.session_state.most_relevant_texts[0].page_content)
             else:
-                st.info("Ask me a question to see the fact-check results based on scientific knowledge!")
-    cleanup_audio_files()
+                st.info(texts['fact_check_info'])
 
 if __name__ == "__main__":
     main()
